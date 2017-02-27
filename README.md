@@ -1,6 +1,7 @@
 * [SWGEmu Server Packages](#sgwemu-server-packages)
 	* [RPM](#rpm)
 	* [Server Configuration](#server-configuration)
+	* [FAQ[(#faq)
 
 
 # SWGEmu Server Packages
