@@ -2,7 +2,7 @@
 
 Name: swgemu-server
 Version: %{timestamp_iso}
-Release: 1%{?dist}
+Release: 2%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.	
 
 License: GPLv3
@@ -12,7 +12,6 @@ BuildRequires: automake git gcc gcc-c++ java-1.8.0-openjdk-headless libdb-devel 
 Requires: lua libdb java-1.8.0-openjdk-headless shadow-utils
 
 %description
-
 
 %build
 
@@ -64,10 +63,8 @@ if [[ ! -h "Core3/MMOEngine" ]]; then
 fi
 
 cd Core3/MMOCoreORB
-patch < %{_sourcedir}/configure.ac.patch
-mkdir -p "$RPM_BUILD_ROOT/opt/swgemu-server"
-PREFIX="$RPM_BUILD_ROOT/opt/swgemu-server" make config
-PREFIX="$RPM_BUILD_ROOT/opt/swgemu-server" make build
+make config
+make rebuild
 
 %pre
 getent group swgemu >/dev/null || groupadd -r swgemu
@@ -81,16 +78,12 @@ rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/bin/ %{buildroot}/opt/swgemu-server/ %{buildroot}/usr/lib/systemd/system/
 cp -r Core3/MMOCoreORB %{buildroot}/opt/swgemu-server/
 cp -r PublicEngine/MMOEngine %{buildroot}/opt/swgemu-server/
-ln -s /opt/swgemu-server/MMOCoreORB/bin/core3 %{buildroot}/usr/bin/core3
-ln -s /opt/swgemu-server/MMOCoreORB/bin/core3 %{buildroot}/usr/bin/swgemu-server
 cp %{_sourcedir}/swgemu-server.service %{buildroot}/usr/lib/systemd/system/
 
 %files
 %doc
 %attr(-, swgemu, swgemu) /opt/swgemu-server
 %attr(755, swgemu, swgemu) /opt/swgemu-server/MMOCoreORB/bin/core3
-/usr/bin/core3
-/usr/bin/swgemu-server
 %attr(644, root, root) /usr/lib/systemd/system/swgemu-server.service
 
 %postun
@@ -98,5 +91,11 @@ cp %{_sourcedir}/swgemu-server.service %{buildroot}/usr/lib/systemd/system/
 exit 0
 
 %changelog
+* Mon Mar 13 2017 Luke Short <ekultails@gmail.com> 2
+- Remove the "configure.ac" patch for RHEL, I got this patched upstream
+    - https://github.com/TheAnswer/Core3/commit/085e2dbb21e7e97a09f2a37437a392d5143680d2
+- Rebuild source code with 'make rebuild' instead of 'make build' to clean up any precompiled code
+- The systemd unit file now correctly changes the 'WorkingDirectory' to start the 'core3' daemon
+
 * Sun Feb 26 2017 Luke Short <ekultails@gmail.com> 1
 - Initial RPM spec release

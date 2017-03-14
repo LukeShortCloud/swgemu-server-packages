@@ -13,14 +13,15 @@ These packages are required to be compiled first. The latest code from GitHub fo
 
 ## RPM
 
-The RPM is only offiically supported on Fedora.
+The RPM is only offiically supported on Fedora >= 25.
 
 How to create the RPM:
 ~~~
 $ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
 $ cp -r rpm/SOURCES/* ~/rpmbuild/SOURCES/
 $ cp -r rpm/SPECS/* ~/rpmbuild/SPECS/
-$ rpmbuild -bb ~/rpmbuild/SPECS/swge-server.spec
+$ sudo dnf builddep ~/rpmbuild/SPECS/swgemu-server.spec
+$ rpmbuild -bb ~/rpmbuild/SPECS/swgemu-server.spec
 ~~~
 
 The compiled RPM will be available at `~/rpmbuild/RPMS/x86_64/swgemu-server-<ISO_TIMESTAMP>-<RPM_SPEC_RELEASE>.<OS_VERSION>.x86_64.rpm`.
@@ -30,12 +31,23 @@ The compiled RPM will be available at `~/rpmbuild/RPMS/x86_64/swgemu-server-<ISO
 
 This is a post-installation configuration guide. The server files are located in `/opt/swgemu-server/`.
 
-* Create these databases and assign a MySQL user with all privileges to them.
-	* /opt/swgemu-server/MMOCoreORB/sql/datatables.sql
-	* /opt/swgemu-server/MMOCoreORB/sql/mantis.sql
-	* /opt/swgemu-server/MMOCoreORB/sql/swgemu.sql
+* Create the `swgemu` MySQL database and import all of the required tables.
 
-* For account purposes, it is recommended to also add additional tables to record login IP addresses and deleted accounts.
+```
+mysql> CREATE DATABASE IF NOT EXISTS swgemu;
+mysql> USE swgemu;
+mysql> SOURCE /opt/swgemu-server/MMOCoreORB/sql/datatables.sql;
+mysql> SOURCE /opt/swgemu-server/MMOCoreORB/sql/mantis.sql;
+mysql> SOURCE /opt/swgemu-server/MMOCoreORB/sql/swgemu.sql;
+```
+
+* Assign a MySQL user to the database.
+
+```
+mysql> GRANT ALL ON swgemu.* TO `swgemu`@`localhost` IDENTIFIED BY “<PASSWORD>”;
+```
+
+* For accounting purposes, it is recommended to also add additional tables to record login IP addresses and deleted accounts.
 	* /opt/swgemu-server/MMOCoreORB/sql/updates/account_ips.sql
 	* /opt/swgemu-server/MMOCoreORB/sql/updates/deletedcharacters_add_dbdeleted.sql
 
@@ -45,22 +57,22 @@ This is a post-installation configuration guide. The server files are located in
 mysql> UPDATE swgemu.galaxy SET address="<SERVER_IP>";
 ```
 
-* Configure the MySQL connection details to the "swgemu" and "mantis" databases.
+* Configure the MySQL connection details to the "swgemu" database. The Mantis configuration should mirror the original MySQL connection settings.
 
 ```
 # vim /opt/swgemu-server/MMOCoreORB/bin/conf/config.lua
-DBHost =
-DBPort =
-DBName =
-DBUser =
-DBPass =
-DBSecret =
-MantisHost =
-MantisPort =
-MantisName =
-MantisUser =
-MantisPass =
-MantisPrfx =
+DBHost = 127.0.0.1
+DBPort = 3306
+DBName = swgemu
+DBUser = swgemu
+DBPass = <PASSWORD>
+DBSecret = <RANDOM_SECRET_STRING>
+MantisHost = 127.0.0.1
+MantisPort = 3306
+MantisName = swgemu
+MantisUser = swgemu
+MantisPass = <PASSWORD>
+MantisPrfx = "mantis_"
 ```
 
 * Start the server.
@@ -68,17 +80,21 @@ MantisPrfx =
 ```
 # systemctl start swgemu-server
 OR
-# /opt/swgemu-server/MMOCoreORB/bin/core3
-OR
-# /usr/bin/core3
+# cd /opt/swgemu-server/MMOCoreORB/bin/
+# core3
 ```
 
-* Test the login with the default account.
+* Create an administrator user account. This can be used to log in and test the server.
 
 ```
-Username: swgemu
-Password: 123456
+$ echo -n "<ADMIN_PASSWORD>" | sha1sum
+$ mysql -u swgemu -p
+Enter password: <PASSWORD>
+mysql> INSERT INTO swgemu.accounts (username, password, admin_level) VALUES ("swgemu", "<SHA1_HASHED_ADMIN_PASSWORD>", 15);
 ```
+
+* Normall player accounts should have their `admin_level` set to `0`.
+
 
 ## FAQ
 
