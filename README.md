@@ -98,8 +98,8 @@ mysql> INSERT INTO swgemu.accounts (username, password, admin_level) VALUES ("sw
 
 ## FAQ
 
-* There is `XYZ` problem with building the RPM. What should I do?
-	* The source code is compiled from the latest unstable code that is in constant development. It is very likely that it is a bug in the source code. Visit [http://gerrit.swgemu.com](http://gerrit.swgemu.com) to view or open a bug report. If the problem is directly related to the RPM spec file then open an issue in this GitHub project.
+* There is `XYZ` problem with building the package. What should I do?
+	* The source code is compiled from the latest unstable code that is in constant development. It is very likely that it is a bug in the source code. Visit [https://www.swgemu.com/bugs/](https://www.swgemu.com/bugs/) to view or open bug reports. Upstream patches can be submitted to [http://review.swgemu.com](http://review.swgemu.com). If the problem is directly related to the package creation then open an issue in this GitHub project.
 * Why is Red Hat Enterprise Linux (RHEL) not supported?
 	* SWGEmu requires at least Lua version 5.2 for support for newer functions such as `lua_version` and `luaL_traceback`. The development team recommends Lua 5.3. Since RHEL 7.2, only Lua 5.1 is provided as a dependency of the RPM utility. Replacing the system Lua library is not supported or endorsed by this repository. SWGEmu also does not currently provide a way to use a custom library location for Lua.
 * Why is Debian not supported?
