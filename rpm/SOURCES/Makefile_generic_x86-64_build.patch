@@ -1,0 +1,11 @@
+--- Core3/MMOCoreORB/build/unix/src/Makefile_generic_build	2017-05-14 23:14:55.050739505 -0400
++++ Core3/MMOCoreORB/build/unix/src/Makefile	2017-05-15 00:08:53.757783593 -0400
+@@ -1226,7 +1226,7 @@
+ top_build_prefix = ../
+ top_builddir = ..
+ top_srcdir = ../../..
+-DEFAULT_FLAGS = $(UNITTEST_DIRECTIVES) -ggdb -Wall -Wextra -Wno-unused -Wno-sign-compare -Wno-multichar -DDEFAULT_DYNAMIC_CAST -Wno-unused-parameter -Wno-overloaded-virtual -Wno-missing-declarations -Werror -std=c++11 -march=native
++DEFAULT_FLAGS = $(UNITTEST_DIRECTIVES) -ggdb -Wall -Wextra -Wno-unused -Wno-sign-compare -Wno-multichar -DDEFAULT_DYNAMIC_CAST -Wno-unused-parameter -Wno-overloaded-virtual -Wno-missing-declarations -Werror -std=c++11 -mtune=generic -march=x86-64
+ AM_CXXFLAGS = $(DEFAULT_FLAGS) -O0
+ ENGINE3_PATH = ../../../../MMOEngine
+ ENGINE3_MOCK_PATH = ../../../utils
