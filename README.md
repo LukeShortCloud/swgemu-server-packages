@@ -38,7 +38,7 @@ A SWGEmu server adminsitrator's guide is provided in this repository at `rpm/SOU
 * Why is Red Hat Enterprise Linux (RHEL) not supported?
 	* SWGEmu requires at least Lua version 5.2 for support for newer functions such as `lua_version` and `luaL_traceback`. The development team recommends Lua 5.3. Since RHEL 7.2, only Lua 5.1 is provided as a dependency of the RPM utility. Replacing the system Lua library is not supported or endorsed by this repository. SWGEmu also does not currently provide a way to use a custom library location for Lua.
 * Why is Debian not supported?
-	* A Debian package is planned. For now, the official SWGEmu development environment, [ZonamaDev](https://github.com/Scurby/ZonamaDev), can be used for running a Debian 8 (Jessie) server.
+	* There is already an official SWGEmu development virtual machine called [ZonamaDev](https://github.com/Scurby/ZonamaDev). This uses Debian 8 (Jessie) as the operating system. There is also support for deploying SWGEmu to [Debian 8 Docker containers for Kubernetes](https://github.com/TheAnswer/Core3/commit/5815f8f975f899f626bf39e8283ae1040f087db7).
 
 
 # License
