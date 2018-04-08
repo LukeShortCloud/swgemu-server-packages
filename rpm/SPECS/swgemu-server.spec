@@ -2,12 +2,12 @@
 
 Name: swgemu-server
 Version: %{timestamp_iso}
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
 BuildRequires: automake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libdb-devel lua-devel make mariadb-devel pandoc
-Requires: findutils gawk java-1.8.0-openjdk-headless lua libdb procps-ng shadow-utils
+Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
 
 
 %description
@@ -107,6 +107,10 @@ exit 0
 
 
 %changelog
+* Sat Apr 7 2018 Luke Short <ekultails@gmail.com> 5
+- Removed unnecessary dependencies
+- Rebased the Makefile's generic processor compilation patch
+
 * Mon May 29 2017 Luke Short <ekultails@gmail.com> 4
 - Features added:
 	- Updated RPM changelog format.

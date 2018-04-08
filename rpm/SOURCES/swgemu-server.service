@@ -4,5 +4,4 @@ Description=Star Wars Galaxies server emulator
 [Service]
 User=swgemu
 WorkingDirectory=/opt/swgemu-server/MMOCoreORB/bin/
-ExecStart=/opt/swgemu-server/MMOCoreORB/bin/core3
-ExecStop=/usr/bin/ps faux | /usr/bin/grep "/opt/swgemu-server/MMOCoreORB/bin/core3" | /usr/bin/awk {'print $2'} | /usr/bin/xargs kill
+ExecStart=core3
