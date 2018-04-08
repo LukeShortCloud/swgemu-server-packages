@@ -36,9 +36,9 @@ A SWGEmu server adminsitrator's guide is provided in this repository at `rpm/SOU
 * There is `XYZ` problem with SWGEmu. What should I do?
 	* The source code is compiled from the latest unstable code that is in constant development. It is very likely that it is a bug in the source code. Visit [https://www.swgemu.com/bugs/](https://www.swgemu.com/bugs/) to view or open bug reports. Upstream patches can be submitted to [http://review.swgemu.com](http://review.swgemu.com). If the problem is directly related to the package creation then open an issue in this GitHub project.
 * Why is Red Hat Enterprise Linux (RHEL) not supported?
-	* SWGEmu requires at least Lua version 5.2 for support for newer functions such as `lua_version` and `luaL_traceback`. The development team recommends Lua 5.3. Since RHEL 7.2, only Lua 5.1 is provided as a dependency of the RPM utility. Replacing the system Lua library is not supported or endorsed by this repository. SWGEmu also does not currently provide a way to use a custom library location for Lua.
+	* SWGEmu requires at least Lua version 5.2 for support for newer functions such as `lua_version` and `luaL_traceback`. The development team recommends Lua 5.3. RHEL 7 provides Lua 5.1 by default and [will not rebase due to compatibility and stability reasons](https://bugzilla.redhat.com/show_bug.cgi?id=1437243). Replacing the system Lua library is not supported.
 * Why is Debian not supported?
-	* There is already an official SWGEmu development virtual machine called [ZonamaDev](https://github.com/Scurby/ZonamaDev). This uses Debian 8 (Jessie) as the operating system. There is also support for deploying SWGEmu to [Debian 8 Docker containers for Kubernetes](https://github.com/TheAnswer/Core3/commit/5815f8f975f899f626bf39e8283ae1040f087db7).
+	* There is already an official SWGEmu development virtual machine called [ZonamaDev](https://github.com/Scurby/ZonamaDev). This uses Debian 9 (Stretch) as the operating system. There is also support for deploying SWGEmu to [Debian docker containers on Kubernetes](https://github.com/TheAnswer/Core3/commit/5815f8f975f899f626bf39e8283ae1040f087db7).
 
 
 # License
