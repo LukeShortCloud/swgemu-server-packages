@@ -1,4 +1,5 @@
-%define timestamp_iso %(date +"%Y%m%d")
+%define core3_commit c8872ec05aae83066271cc7226c0eb6899b936e5
+%define publicengine_commit 8c39f72d8cd0242d1b09a6a4d3614599e57df70a
 
 Name: swgemu-server
 Version: %{timestamp_iso}
@@ -6,42 +7,21 @@ Release: 5%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
-BuildRequires: automake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libdb-devel lua-devel make mariadb-devel pandoc
+%undefine _disable_source_fetch
+SOURCE0: https://github.com/TheAnswer/Core3/archive/%{core3_commit}.tar.gz
+SOURCE1: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
+BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libdb-devel lua-devel make mariadb-devel pandoc
 Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
-
 
 %description
 
+%prep
+tar -x -v -f %{SOURCE0}
+tar -x -v -f %{SOURCE1}
 
 %build
-
-if [[ -d "PublicEngine" ]]; then
-	cd PublicEngine
-	git checkout master
-	# Undo any local changes.
-	git reset --hard
-	# Delete any other non-repository files such as existing compiled code.
-	git clean -f -d
-	# Pull the latest code.
-	git pull origin master
-	cd ..
-else
-	git clone --depth 1 https://github.com/TheAnswer/PublicEngine.git
-fi
-
-if [[ -d "Core3" ]]; then
-	cd Core3
-	git checkout unstable
-	git reset --hard
-	git clean -f -d
-	git pull origin unstable
-	cd ..
-else
-	git clone --depth 1 https://github.com/TheAnswer/Core3.git
-fi
-
 pushd .
-cd PublicEngine/MMOEngine
+cd PublicEngine-%{publicengine_commit}/MMOEngine
 make
 chmod 755 bin/idlc
 
@@ -61,11 +41,11 @@ popd
 
 # If the symbolic link to "MMOEngine" does not exist,
 # then create it.
-if [[ ! -h "Core3/MMOEngine" ]]; then
-	ln -s ../PublicEngine/MMOEngine Core3/MMOEngine
+if [[ ! -h "Core3-%{core3_commit}/MMOEngine" ]]; then
+	ln -s ../PublicEngine-%{publicengine_commit}/MMOEngine Core3-%{core3_commit}/MMOEngine
 fi
 
-cd Core3/MMOCoreORB
+cd Core3-%{core3_commit}/MMOCoreORB
 make config
 patch -p2 < %{_sourcedir}/Makefile_generic_x86-64_build.patch
 make rebuild
@@ -87,8 +67,8 @@ exit 0
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/bin/ %{buildroot}/opt/swgemu-server/doc/\
  %{buildroot}/usr/lib/systemd/system/
-cp -r Core3/MMOCoreORB %{buildroot}/opt/swgemu-server/
-cp -r PublicEngine/MMOEngine %{buildroot}/opt/swgemu-server/
+cp -r Core3-%{core3_commit}/MMOCoreORB %{buildroot}/opt/swgemu-server/
+cp -r PublicEngine-%{publicengine_commit}/MMOEngine %{buildroot}/opt/swgemu-server/
 cp %{_sourcedir}/swgemu-server.service %{buildroot}/usr/lib/systemd/system/
 find %{buildroot} -name ".git*" -delete
 pandoc %{_sourcedir}/readme.md > %{buildroot}/opt/swgemu-server/doc/readme.html
