@@ -2,8 +2,8 @@
 %define publicengine_commit 8c39f72d8cd0242d1b09a6a4d3614599e57df70a
 
 Name: swgemu-server
-Version: %{timestamp_iso}
-Release: 5%{?dist}
+Version: 20181231
+Release: 1%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
