@@ -1,8 +1,8 @@
-%define core3_commit c8872ec05aae83066271cc7226c0eb6899b936e5
-%define publicengine_commit 8c39f72d8cd0242d1b09a6a4d3614599e57df70a
+%define core3_commit b8776cc66a0c96e6d78494e3f389e48f43d469d1
+%define publicengine_commit 1bbdb8a182a9e44bc23f1d972ac254c1ca98db03
 
 Name: swgemu-server
-Version: 20181231
+Version: 20190623
 Release: 1%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
@@ -10,7 +10,7 @@ URL: https://github.com/ekultails/swgemu-server-packages
 %undefine _disable_source_fetch
 SOURCE0: https://github.com/TheAnswer/Core3/archive/%{core3_commit}.tar.gz
 SOURCE1: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
-BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libdb-devel lua-devel make mariadb-devel pandoc
+BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel pandoc
 Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
 
 %description
@@ -48,7 +48,9 @@ fi
 cd Core3-%{core3_commit}/MMOCoreORB
 make config
 patch -p2 < %{_sourcedir}/Makefile_generic_x86-64_build.patch
-make rebuild
+make config
+make cleanidl
+make -j 4 build-cmake
 cd %{_builddir}
 # This will find and delete all files that contain a word and
 # end with the file extension ".cpp" or ".h" (source files).
