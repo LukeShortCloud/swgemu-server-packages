@@ -11,14 +11,16 @@ This repository aims to provide easily available and unofficial Linux packages f
 
 ## RPM
 
-The RPM is only offiically supported on Fedora >= 25 (64-bit).
+The RPM is only officially supported on Fedora >= 28 (64-bit).
 
 How to create the RPM:
 ~~~
-$ sudo dnf install 'dnf-command(builddep)' rpm-build
+$ docker run -it --name swgemubuild fedora:28 bash
+$ sudo dnf install 'dnf-command(builddep)' git rpm-build
+$ git clone https://github.com/ekultails/swgemu-server-packages.git
 $ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-$ cp -f -r rpm/SOURCES/* ~/rpmbuild/SOURCES/
-$ cp -f -r rpm/SPECS/* ~/rpmbuild/SPECS/
+$ cp -f -r swgemu-server-packages/rpm/SOURCES/* ~/rpmbuild/SOURCES/
+$ cp -f -r swgemu-server-packages/rpm/SPECS/* ~/rpmbuild/SPECS/
 $ sudo dnf builddep ~/rpmbuild/SPECS/swgemu-server.spec
 $ rpmbuild -bb ~/rpmbuild/SPECS/swgemu-server.spec
 ~~~
