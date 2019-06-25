@@ -89,6 +89,10 @@ exit 0
 
 
 %changelog
+* Mon Jun 24 2019 Luke Short <ekultails@gmail.com 20190623-1
+- Use specific git commits for the build
+- Use the date of the latest commit for the swgemu-server version
+
 * Sat Apr 7 2018 Luke Short <ekultails@gmail.com> 5
 - Removed unnecessary dependencies
 - Rebased the Makefile's generic processor compilation patch
