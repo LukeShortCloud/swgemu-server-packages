@@ -11,11 +11,20 @@ This repository provides the necessary files to build unofficial RPM packages fo
 
 ## RPM
 
-The RPM is only officially supported on Fedora >= 28 and RHEL/CentOS 8 (x86_64).
+Supported operating systems (x86_64):
 
-How to create the RPM:
-~~~
+* Fedora >= 28
+* RHEL/CentOS 8
+
+For building the RPM, optionally use a container. Note that sudo is not provided or required inside the container.
+
+```
 $ docker run -it --name swgemubuild fedora:28 bash
+```
+
+Install the dependencies to build the RPM, copy over the files required for the it, and then build it.
+
+```
 $ sudo dnf install 'dnf-command(builddep)' git rpm-build
 $ git clone https://github.com/ekultails/swgemu-server-packages.git
 $ mkdir -p ~/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
@@ -23,7 +32,7 @@ $ cp -f -r swgemu-server-packages/rpm/SOURCES/* ~/rpmbuild/SOURCES/
 $ cp -f -r swgemu-server-packages/rpm/SPECS/* ~/rpmbuild/SPECS/
 $ sudo dnf builddep ~/rpmbuild/SPECS/swgemu-server.spec
 $ rpmbuild -bb ~/rpmbuild/SPECS/swgemu-server.spec
-~~~
+```
 
 The compiled RPM will be available at `~/rpmbuild/RPMS/x86_64/swgemu-server*.rpm`.
 
