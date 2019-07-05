@@ -1,23 +1,21 @@
-%define core3_commit b8776cc66a0c96e6d78494e3f389e48f43d469d1
+%define core3_commit cd5b463d60f34de138861bff5b00d8554655103a
 %define publicengine_commit 1bbdb8a182a9e44bc23f1d972ac254c1ca98db03
 
 Name: swgemu-server
-Version: 20190623
+Version: 20190705
 Release: 1%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
 %undefine _disable_source_fetch
-SOURCE0: https://github.com/TheAnswer/Core3/archive/%{core3_commit}.tar.gz
-SOURCE1: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
-BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel pandoc
+SOURCE0: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
+BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel pandoc
 Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
 
 %description
 
 %prep
 tar -x -v -f %{SOURCE0}
-tar -x -v -f %{SOURCE1}
 
 %build
 pushd .
@@ -38,14 +36,18 @@ else
 fi
 
 popd
+rm -rf Core3
+git clone --depth=1 https://github.com/TheAnswer/Core3.git
+cd Core3
+git checkout %{core3_commit}
 
 # If the symbolic link to "MMOEngine" does not exist,
 # then create it.
-if [[ ! -h "Core3-%{core3_commit}/MMOEngine" ]]; then
-	ln -s ../PublicEngine-%{publicengine_commit}/MMOEngine Core3-%{core3_commit}/MMOEngine
+if [[ ! -h "MMOEngine" ]]; then
+    ln -s ../PublicEngine-%{publicengine_commit}/MMOEngine MMOEngine
 fi
 
-cd Core3-%{core3_commit}/MMOCoreORB
+cd MMOCoreORB
 make config
 patch -p2 < %{_sourcedir}/Makefile_generic_x86-64_build.patch
 make config
@@ -69,7 +71,7 @@ exit 0
 rm -rf %{buildroot}
 mkdir -p %{buildroot}/usr/bin/ %{buildroot}/opt/swgemu-server/doc/\
  %{buildroot}/usr/lib/systemd/system/
-cp -r Core3-%{core3_commit}/MMOCoreORB %{buildroot}/opt/swgemu-server/
+cp -r Core3/MMOCoreORB %{buildroot}/opt/swgemu-server/
 cp -r PublicEngine-%{publicengine_commit}/MMOEngine %{buildroot}/opt/swgemu-server/
 cp %{_sourcedir}/swgemu-server.service %{buildroot}/usr/lib/systemd/system/
 find %{buildroot} -name ".git*" -delete
@@ -89,6 +91,11 @@ exit 0
 
 
 %changelog
+* Fri Jul 5 2019 Luke Short <ekultails@gmail.com 20190705-1
+- Update Core3 to the latest commit (cd5b463d) to address build issues with GCC 8
+- Use a git repository for Core3
+- Add build dependency: openssl-devel
+
 * Mon Jun 24 2019 Luke Short <ekultails@gmail.com 20190623-1
 - Use specific git commits for the build
 - Use the date of the latest commit for the swgemu-server version
