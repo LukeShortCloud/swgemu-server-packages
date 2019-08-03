@@ -3,7 +3,7 @@
 
 Name: swgemu-server
 Version: 20190705
-Release: 2%{?dist}
+Release: 3%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
@@ -11,10 +11,11 @@ URL: https://github.com/ekultails/swgemu-server-packages
 SOURCE0: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
 SOURCE1: swgemu-server.service
 SOURCE2: readme.md
-BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel pandoc
+BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
 Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
 
 %description
+Star Wars Galaxies Emulator (SWGEmu) server. Documentation for setting up a new server is provided at /opt/swgemu/doc/readme.md.
 
 %prep
 tar -x -v -f %{SOURCE0}
@@ -54,6 +55,7 @@ cd MMOCoreORB
 make config
 make config
 make cleanidl
+# Disable the usage of the compilation argument "-march=native" for generic builds.
 sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF"/g' Makefile
 make -j 4 build-cmake
 cd %{_builddir}
@@ -78,7 +80,7 @@ cp -r Core3/MMOCoreORB %{buildroot}/opt/swgemu-server/
 cp -r PublicEngine-%{publicengine_commit}/MMOEngine %{buildroot}/opt/swgemu-server/
 cp %{SOURCE1} %{buildroot}/usr/lib/systemd/system/
 find %{buildroot} -name ".git*" -delete
-pandoc %{SOURCE2} > %{buildroot}/opt/swgemu-server/doc/readme.html
+cp %{SOURCE2} %{buildroot}/opt/swgemu-server/doc/
 
 
 %files
@@ -94,6 +96,9 @@ exit 0
 
 
 %changelog
+* Wed Jul 31 2019 Luke Short <ekultails@gmail.com> 20190705-3
+- Remove pandoc as a build dependency
+
 * Sun Jul 28 2019 Luke Short <ekultails@gmail.com> 20190705-2
 - Include source files in the RPM spec file
 - Do not delete the local Core3 git repository when rebuilding the RPM

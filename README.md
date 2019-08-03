@@ -39,7 +39,7 @@ The compiled RPM will be available at `~/rpmbuild/RPMS/x86_64/swgemu-server*.rpm
 
 ## Server Configuration
 
-A SWGEmu server adminsitrator's guide is provided in this repository at `rpm/SOURCES/readme.md`. This is compiled into the RPM to be available at `/opt/swgemu-server/doc/readme.html` after it is installed.
+A SWGEmu server adminsitrator's guide is provided in this repository at `rpm/SOURCES/readme.md`. This is compiled into the RPM to be available at `/opt/swgemu-server/doc/readme.md` after it is installed.
 
 
 ## FAQ
