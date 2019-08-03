@@ -1,7 +1,7 @@
 * [SWGEmu Server Packages](#sgwemu-server-packages)
-	* [RPM](#rpm)
-	* [Server Configuration](#server-configuration)
-	* [FAQ](#faq)
+    * [RPM](#rpm)
+    * [Server Configuration](#server-configuration)
+    * [FAQ](#faq)
 
 
 # SWGEmu Server Packages
@@ -45,9 +45,9 @@ A SWGEmu server adminsitrator's guide is provided in this repository at `rpm/SOU
 ## FAQ
 
 * There is `XYZ` problem with SWGEmu. What should I do?
-	* Only open GitHub issues here if there are issues building, installing, or updating the RPM itself. Visit [https://www.swgemu.com/bugs/](https://www.swgemu.com/bugs/) to view or open bug reports. Upstream patches can be submitted to [http://review.swgemu.com](http://review.swgemu.com).
+    * Only open GitHub issues here if there are issues building, installing, or updating the RPM itself. Visit [https://www.swgemu.com/bugs/](https://www.swgemu.com/bugs/) to view or open bug reports. Upstream patches can be submitted to [http://review.swgemu.com](http://review.swgemu.com).
 * Why are there no Debian packages?
-	* There is already an official SWGEmu development virtual machine called [ZonamaDev](https://github.com/Scurby/ZonamaDev). This uses Debian as the operating system. There is also support for deploying SWGEmu to [Debian docker containers on Kubernetes](https://github.com/TheAnswer/Core3/commit/5815f8f975f899f626bf39e8283ae1040f087db7).
+    * There is already an official SWGEmu development virtual machine called [ZonamaDev](https://github.com/Scurby/ZonamaDev). This uses Debian as the operating system. There is also support for deploying SWGEmu to [Debian docker containers on Kubernetes](https://github.com/TheAnswer/Core3/commit/5815f8f975f899f626bf39e8283ae1040f087db7).
 
 
 # License

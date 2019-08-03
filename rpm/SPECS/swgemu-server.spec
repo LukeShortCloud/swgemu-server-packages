@@ -27,10 +27,10 @@ make
 chmod 755 bin/idlc
 
 if [ -z ${CLASSPATH+x} ]; then
-	export CLASSPATH="$(pwd)/bin/idlc.jar"
+    export CLASSPATH="$(pwd)/bin/idlc.jar"
 else
-	# Append to the CLASSPATH variable if it exists.
-	export CLASSPATH="${CLASSPATH}:$(pwd)/bin/idlc.jar"
+    # Append to the CLASSPATH variable if it exists.
+    export CLASSPATH="${CLASSPATH}:$(pwd)/bin/idlc.jar"
 fi
 
 popd
@@ -67,8 +67,8 @@ find . -regextype posix-egrep -regex '(.+\/\w+\.cpp|.+\/\w+\.h)' -delete
 %pre
 getent group swgemu >/dev/null || groupadd -r swgemu
 getent passwd swgemu >/dev/null || \
-	useradd -r -g swgemu -s /sbin/nologin \
-	-c "Non-privileged user for running the SWGEmu server." swgemu
+    useradd -r -g swgemu -s /sbin/nologin \
+    -c "Non-privileged user for running the SWGEmu server." swgemu
 exit 0
 
 
@@ -120,22 +120,22 @@ exit 0
 
 * Mon May 29 2017 Luke Short <ekultails@gmail.com> 4
 - Features added:
-	- Updated RPM changelog format.
-	- Server administration documentation is now included as a read me HTML file.
-	- Do not override the main configuration file "config.lua" on package upgrades.
-	- Remove all Git related files from the built RPM.
+    - Updated RPM changelog format.
+    - Server administration documentation is now included as a read me HTML file.
+    - Do not override the main configuration file "config.lua" on package upgrades.
+    - Remove all Git related files from the built RPM.
 - Bugs fixed:
-	- Patched the Core3 Makefile to allow cross-platform compilation for all x86-64 processors.
-	- The systemd unit file will now correctly stop the server.
+    - Patched the Core3 Makefile to allow cross-platform compilation for all x86-64 processors.
+    - The systemd unit file will now correctly stop the server.
 
 * Sat Mar 25 2017 Luke Short <ekultails@gmail.com> 3
 - Feature added: Decreased the build time of the package and saved space in the RPM.
 
 * Mon Mar 13 2017 Luke Short <ekultails@gmail.com> 2
 - Features added:
-	- Remove the "configure.ac" patch for RHEL, I got this patched upstream.
-		- https://github.com/TheAnswer/Core3/commit/085e2dbb21e7e97a09f2a37437a392d5143680d2
-	- Rebuild source code with 'make rebuild' instead of 'make build' to clean up any precompiled code.
+    - Remove the "configure.ac" patch for RHEL, I got this patched upstream.
+        - https://github.com/TheAnswer/Core3/commit/085e2dbb21e7e97a09f2a37437a392d5143680d2
+    - Rebuild source code with 'make rebuild' instead of 'make build' to clean up any precompiled code.
 - Bug fixed: The systemd unit file now correctly changes the 'WorkingDirectory' to start the 'core3' daemon.
 
 * Sun Feb 26 2017 Luke Short <ekultails@gmail.com> 1
