@@ -3,7 +3,7 @@
 
 Name: swgemu-server
 Version: 20190705
-Release: 3%{?dist}
+Release: 4%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
@@ -62,7 +62,7 @@ sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF -DCMAKE_CXX_COMPILER_LAU
 make -j 4 build-cmake
 cd %{_builddir}
 # This will find and delete all files that contain a word and
-# end with the file extension ".cpp" or ".h" (source files).
+# end with the file extension ".cpp", ".h", or ".py" (source files).
 find . -regextype posix-egrep -regex '(.+\/\w+\.cpp|.+\/\w+\.h|.+\/\w+\.py)' -delete
 
 
@@ -98,13 +98,9 @@ exit 0
 
 
 %changelog
-* Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-6
-- Delete Python files from the source code
-
-* Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-5
-- Use ccache for faster compilation
-
 * Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-4
+- Delete Python files from the source code
+- Use ccache for faster compilation
 - Suggest mariadb as a dependency
 
 * Wed Jul 31 2019 Luke Short <ekultails@gmail.com> 20190705-3
