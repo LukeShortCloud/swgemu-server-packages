@@ -11,7 +11,7 @@ URL: https://github.com/ekultails/swgemu-server-packages
 SOURCE0: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
 SOURCE1: swgemu-server.service
 SOURCE2: readme.md
-BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
+BuildRequires: automake ccache cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
 Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
 Suggests: mariadb
 
@@ -57,7 +57,8 @@ make config
 make config
 make cleanidl
 # Disable the usage of the compilation argument "-march=native" for generic builds.
-sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF"/g' Makefile
+# Enable ccache for faster compilation time when recreating the RPM.
+sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"/g' Makefile
 make -j 4 build-cmake
 cd %{_builddir}
 # This will find and delete all files that contain a word and
@@ -97,6 +98,9 @@ exit 0
 
 
 %changelog
+* Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-5
+- Use ccache for faster compilation
+
 * Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-4
 - Suggest mariadb as a dependency
 
