@@ -63,7 +63,7 @@ make -j 4 build-cmake
 cd %{_builddir}
 # This will find and delete all files that contain a word and
 # end with the file extension ".cpp" or ".h" (source files).
-find . -regextype posix-egrep -regex '(.+\/\w+\.cpp|.+\/\w+\.h)' -delete
+find . -regextype posix-egrep -regex '(.+\/\w+\.cpp|.+\/\w+\.h|.+\/\w+\.py)' -delete
 
 
 %pre
@@ -98,6 +98,9 @@ exit 0
 
 
 %changelog
+* Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-6
+- Delete Python files from the source code
+
 * Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-5
 - Use ccache for faster compilation
 
