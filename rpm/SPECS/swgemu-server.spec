@@ -13,6 +13,7 @@ SOURCE1: swgemu-server.service
 SOURCE2: readme.md
 BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
 Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
+Suggests: mariadb
 
 %description
 Star Wars Galaxies Emulator (SWGEmu) server. Documentation for setting up a new server is provided at /opt/swgemu/doc/readme.md.
@@ -96,6 +97,9 @@ exit 0
 
 
 %changelog
+* Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-4
+- Suggest mariadb as a dependency
+
 * Wed Jul 31 2019 Luke Short <ekultails@gmail.com> 20190705-3
 - Remove pandoc as a build dependency
 
