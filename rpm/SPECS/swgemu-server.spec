@@ -3,7 +3,7 @@
 
 Name: swgemu-server
 Version: 20190705
-Release: 4%{?dist}
+Release: 5%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
@@ -11,15 +11,21 @@ URL: https://github.com/ekultails/swgemu-server-packages
 SOURCE0: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
 SOURCE1: swgemu-server.service
 SOURCE2: readme.md
-BuildRequires: automake ccache cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
+BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
+%if 0%{?fedora}
+BuildRequires: ccache
+%endif
 Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
 Suggests: mariadb
+
 
 %description
 Star Wars Galaxies Emulator (SWGEmu) server. Documentation for setting up a new server is provided at /opt/swgemu/doc/readme.md.
 
+
 %prep
 tar -x -v -f %{SOURCE0}
+
 
 %build
 pushd .
@@ -58,7 +64,11 @@ make config
 make cleanidl
 # Disable the usage of the compilation argument "-march=native" for generic builds.
 # Enable ccache for faster compilation time when recreating the RPM.
+%if 0%{?fedora}
 sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"/g' Makefile
+%else
+sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF"/g' Makefile
+%endif
 make -j 4 build-cmake
 cd %{_builddir}
 # This will find and delete all files that contain a word and
@@ -98,6 +108,9 @@ exit 0
 
 
 %changelog
+* Wed Aug 7 2019 Luke Short <ekultails@gmail.com> 20190707-5
+- Only have a build dependency for ccache on Fedora where it is available
+
 * Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-4
 - Delete Python files from the source code
 - Use ccache for faster compilation
