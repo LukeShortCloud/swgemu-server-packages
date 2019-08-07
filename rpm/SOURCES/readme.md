@@ -1,12 +1,12 @@
 # SWGEmu Server
 
 * [Getting Started](#getting-started)
-    * [Database](#getting-started---database)
-    * [TRE Files](#getting-started---tre-files)
-    * [Planets](#getting-started---planets)
+    * [Database](#database)
+    * [TRE Files](#tre-files)
+    * [Planets](#planets)
 * [Configurations](#configurations)
-    * [Ports](#configurations---ports)
-    * [Users](#configurations---users)
+    * [Ports](#ports)
+    * [Users](#users)
 
 
 # Getting Started
@@ -14,7 +14,7 @@
 After installing the "swgemu-server" package for the first time, initial setup is required. A MySQL or MariaDB database needs to be setup and configured. The client TRE files also need to be copied over from a official Star Wars Galaxies game installation.
 
 
-## Getting Started - Database
+## Database
 
 All of the databases and tables are stored in the "/opt/swgemu-server/MMOCoreORB/sql/" directory.
 
@@ -94,66 +94,117 @@ Start the server using systemd or manually.
 ```
 
 
-# Getting Started - TRE Files
+# TRE Files
 
-TRE files contain all of the models and client-side data for rendering. These must be obtained by an installation of a fully updated original Star Wars Galaxies game. Some TRE files may need to be copied from a SWGEmu launcher installation. The TRE files to load can be modified in the  "/opt/swgemu-server/MMOCoreORB/bin/conf/config.lua" file.
+TRE files contain all of the models and client-side data for rendering. These are not provided by the RPM. SWGEmu uses unmodified TRE files from the Pre-Combat Update (PCU) era. They can be found in the original installation directory of the Star Wars Galaxies game: `C:\Program Files (x86)\StarWarsGalaxies\`. The TRE files to load can be modified in the  `/opt/swgemu-server/MMOCoreORB/bin/conf/config.lua` file.
 
-* TrePath = The full path to the directory that contains the TRE files and the "live.cfg" configuration file. By default, SWGEmu will look for TRE files in the "/home/swgemu/Desktop/SWGEmu/" directory.
-* TreFiles = All of the TRE files to load for the server.
+* TrePath = The full path to the directory that contains the TRE files and the `live.cfg` configuration file. By default, SWGEmu will look for TRE files in the `/home/swgemu/Desktop/SWGEmu/` directory.
+* TreFiles = All of the TRE files to load for the server. Custom TRE files can also be added here.
+    * bottom.tre
+    * data_animation_00.tre
+    * data_music_00.tre
+    * data_other_00.tre
+    * data_sample_00.tre
+    * data_sample_01.tre
+    * data_sample_02.tre
+    * data_sample_03.tre
+    * data_sample_04.tre
+    * data_skeletal_mesh_00.tre
+    * data_skeletal_mesh_01.tre
+    * data_sku1_00.tre
+    * data_sku1_01.tre
+    * data_sku1_02.tre
+    * data_sku1_03.tre
+    * data_sku1_04.tre
+    * data_sku1_05.tre
+    * data_sku1_06.tre
+    * data_sku1_07.tre
+    * data_static_mesh_00.tre
+    * data_static_mesh_01.tre
+    * data_texture_00.tre
+    * data_texture_01.tre
+    * data_texture_02.tre
+    * data_texture_03.tre
+    * data_texture_04.tre
+    * data_texture_05.tre
+    * data_texture_06.tre
+    * data_texture_07.tre
+    * default_patch.tre
+    * patch_00.tre
+    * patch_01.tre
+    * patch_02.tre
+    * patch_03.tre
+    * patch_04.tre
+    * patch_05.tre
+    * patch_06.tre
+    * patch_07.tre
+    * patch_08.tre
+    * patch_09.tre
+    * patch_10.tre
+    * patch_11_00.tre
+    * patch_11_01.tre
+    * patch_11_02.tre
+    * patch_11_03.tre
+    * patch_12_00.tre
+    * patch_13_00.tre
+    * patch_14_00.tre
+    * patch_sku1_12_00.tre
+    * patch_sku1_13_00.tre
+    * patch_sku1_14_00.tre
 
 
 # Getting Started - Planets
 
-By default, only the Tutorial and Tatooine zones are enabled to lower the resource usage of a new server. Enabling and disabling zones/planets is handled in the "/opt/swgemu-server/MMOCoreORB/bin/conf/config.lua" file with the "ZonesEnabled" variable. Remove any "--" Lua comment characters from planets that should be enabled. Below is an example of enabling all zones.
+By default, only the Tutorial and Tatooine zones are enabled to lower the resource usage of a new server. Enabling and disabling zones/planets is handled in the "/opt/swgemu-server/MMOCoreORB/bin/conf/config.lua" file with the "ZonesEnabled" variable. Remove any "--" Lua comment characters from planets that should be enabled. Below is an example of enabling all zones except for space (which are currently not implemented server side).
 
 ```
-ZonesEnabled = {
-        "09",
-        "10",
-        "11",
-        "character_farm",
-        "cinco_city_test_m5",
-        "corellia",
-        "creature_test",
-        "dantooine",
-        "dathomir",
-        "dungeon1",
-        "endor",
-        "endor_asommers",
-        "floratest",
-        "godclient_test",
-        "lok",
-        "naboo",
-        "otoh_gunga",
-        "rivertest",
-        "rori",
-        "runtimerules",
-        "simple",
-        "space_09",
-        "space_corellia",
-        "space_corellia_2",
-        "space_dantooine",
-        "space_dathomir",
-        "space_endor",
-        "space_env",
-        "space_halos",
-        "space_heavy1",
-        "space_light1",
-        "space_lok",
-        "space_naboo",
-        "space_naboo_2",
-        "space_tatooine",
-        "space_tatooine_2",
-        "space_yavin4",
-        "taanab",
-        "talus",
-        "tatooine",
-        "test_wearables",
-        "tutorial",
-        "umbra",
-        "watertabletest",
-        "yavin4"
-}
+        ZonesEnabled = {
+                "09",
+                "10",
+                "11",
+                "character_farm",
+                "cinco_city_test_m5",
+                "corellia",
+                "creature_test",
+                "dantooine",
+                "dathomir",
+                "dungeon1",
+                "endor",
+                "endor_asommers",
+                "floratest",
+                "godclient_test",
+                "lok",
+                "naboo",
+                "otoh_gunga",
+                "rivertest",
+                "rori",
+                "runtimerules",
+                "simple",
+                --"space_09",
+                --"space_corellia",
+                --"space_corellia_2",
+                --"space_dantooine",
+                --"space_dathomir",
+                --"space_endor",
+                --"space_env",
+                --"space_halos",
+                --"space_heavy1",
+                --"space_light1",
+                --"space_lok",
+                --"space_naboo",
+                --"space_naboo_2",
+                --"space_tatooine",
+                --"space_tatooine_2",
+                --"space_yavin4",
+                "taanab",
+                "talus",
+                "tatooine",
+                "test_wearables",
+                "tutorial",
+                "umbra",
+                "watertabletest",
+                "yavin4"
+        },
 ```
 
 
@@ -175,7 +226,7 @@ Lua scripts from "/opt/swgemu-server/MMOCoreORB/bin/scripts/" are used to handle
 * utils = Miscellaneous global functions that can be used for other scripts.
 
 
-## Configurations - Ports
+## Ports
 
 Many ports are used for the SWGEmu server.
 
@@ -190,7 +241,7 @@ Many ports are used for the SWGEmu server.
 | WebPorts | 44460 | |
 
 
-## Configurations - Users
+## Users
 
 SWGEmu user accounts are all handled by the "swgemu" database. User passwords are stored after being encrypted in SHA1. Adding users can be done via the command.
 
