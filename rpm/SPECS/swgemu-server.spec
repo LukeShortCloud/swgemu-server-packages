@@ -3,7 +3,7 @@
 
 Name: swgemu-server
 Version: 20190705
-Release: 5%{?dist}
+Release: 6%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
@@ -108,6 +108,9 @@ exit 0
 
 
 %changelog
+* Thu Aug 8 2019 Luke Short <ekultails@gmail.com> 20190707-6
+- Use the full path for the core3 executable in the systemd unit file
+
 * Wed Aug 7 2019 Luke Short <ekultails@gmail.com> 20190707-5
 - Only have a build dependency for ccache on Fedora where it is available
 
