@@ -40,7 +40,7 @@ mysql> SOURCE /opt/swgemu-server/MMOCoreORB/sql/swgemu.sql;
 Assign a MySQL user to the database. In this example, "swgemu" is used as the MySL user.
 
 ```
-mysql> GRANT ALL ON swgemu.* TO `swgemu`@`localhost` IDENTIFIED BY “<PASSWORD>”;
+mysql> GRANT ALL ON swgemu.* TO `swgemu`@`localhost` IDENTIFIED BY “<MYSQL_PASSWORD>”;
 ```
 
 For accounting purposes, it is recommended to also add additional tables to record login IP addresses and deleted accounts.
@@ -64,7 +64,7 @@ DBHost = 127.0.0.1
 DBPort = 3306
 DBName = swgemu
 DBUser = swgemu
-DBPass = <PASSWORD>
+DBPass = <MYSQL_PASSWORD>
 DBSecret = <RANDOM_SECRET_STRING>
 MantisHost = 127.0.0.1
 MantisPort = 3306
@@ -74,13 +74,13 @@ MantisPass = <PASSWORD>
 MantisPrfx = "mantis_"
 ```
 
-Create an administrator user account. This can be used to log in and test the server. Normal player character accounts should have their "admin_level" set to "0."
+Create an administrator user account. This can be used to log in and test the server. Normal player character accounts should have their `admin_level` set to `0`. Generate a random salt for the password and a random number for the unique station_id for the user.
 
 ```
-$ echo -n "<ADMIN_PASSWORD>" | sha1sum
+$ openssl passwd -1 -salt <SALT> <SWGEMU_USER_PASSWORD>
 $ mysql -u swgemu -p
-Enter password: <PASSWORD>
-mysql> INSERT INTO swgemu.accounts (username, password, admin_level) VALUES ("swgemu", "<SHA1_HASHED_ADMIN_PASSWORD>", 15);
+Enter password: <MYSQL_PASSWORD>
+mysql> INSERT INTO swgemu.accounts (username, admin_level, station_id, password, salt) VALUES ("swgemu", 15, <RANDOM_INT>, "<SWGEMU_USER_PASSWORD>", "<SALT>");
 ```
 
 Start the server using systemd or manually.
