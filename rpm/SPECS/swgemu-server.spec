@@ -3,7 +3,7 @@
 
 Name: swgemu-server
 Version: 20190705
-Release: 6%{?dist}
+Release: 7%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
@@ -11,6 +11,7 @@ URL: https://github.com/ekultails/swgemu-server-packages
 SOURCE0: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
 SOURCE1: swgemu-server.service
 SOURCE2: readme.md
+SOURCE3: CMakeLists.txt.patch
 BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
 %if 0%{?fedora}
 BuildRequires: ccache
@@ -51,6 +52,7 @@ git reset --hard
 git clean -fdx
 git fetch --all
 git checkout %{core3_commit}
+patch -p1 < %{SOURCE3}
 
 # If the symbolic link to "MMOEngine" does not exist,
 # then create it.
@@ -108,6 +110,9 @@ exit 0
 
 
 %changelog
+* Fri Aug 9 2019 Luke Short <ekultails@gmail.com> 20190707-7
+- Ignore GCC deprecated-copy and pessimizing-move warnings
+
 * Thu Aug 8 2019 Luke Short <ekultails@gmail.com> 20190707-6
 - Use the full path for the core3 executable in the systemd unit file
 
