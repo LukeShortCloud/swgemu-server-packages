@@ -110,13 +110,13 @@ exit 0
 
 
 %changelog
-* Fri Aug 9 2019 Luke Short <ekultails@gmail.com> 20190707-7
+* Fri Aug 9 2019 Luke Short <ekultails@gmail.com> 20190705-7
 - Ignore GCC deprecated-copy and pessimizing-move warnings
 
-* Thu Aug 8 2019 Luke Short <ekultails@gmail.com> 20190707-6
+* Thu Aug 8 2019 Luke Short <ekultails@gmail.com> 20190705-6
 - Use the full path for the core3 executable in the systemd unit file
 
-* Wed Aug 7 2019 Luke Short <ekultails@gmail.com> 20190707-5
+* Wed Aug 7 2019 Luke Short <ekultails@gmail.com> 20190705-5
 - Only have a build dependency for ccache on Fedora where it is available
 
 * Sun Aug 4 2019 Luke Short <ekultails@gmail.com> 20190705-4
