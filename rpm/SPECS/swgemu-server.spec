@@ -3,7 +3,7 @@
 
 Name: swgemu-server
 Version: 20190705
-Release: 7%{?dist}
+Release: 8%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
@@ -11,13 +11,12 @@ URL: https://github.com/ekultails/swgemu-server-packages
 SOURCE0: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
 SOURCE1: swgemu-server.service
 SOURCE2: readme.md
-SOURCE3: CMakeLists.txt.patch
 BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
 %if 0%{?fedora}
 BuildRequires: ccache
 %endif
 Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
-Suggests: mariadb
+Suggests: mariadb-server
 
 
 %description
@@ -52,7 +51,6 @@ git reset --hard
 git clean -fdx
 git fetch --all
 git checkout %{core3_commit}
-patch -p1 < %{SOURCE3}
 
 # If the symbolic link to "MMOEngine" does not exist,
 # then create it.
@@ -65,11 +63,12 @@ make config
 make config
 make cleanidl
 # Disable the usage of the compilation argument "-march=native" for generic builds.
+# Do not force GCC to error out on warnings.
 # Enable ccache for faster compilation time when recreating the RPM.
 %if 0%{?fedora}
-sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"/g' Makefile
+sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF -DENABLE_ERROR_ON_WARNINGS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"/g' Makefile
 %else
-sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF"/g' Makefile
+sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF -DENABLE_ERROR_ON_WARNINGS=OFF"/g' Makefile
 %endif
 make -j 4 build-cmake
 cd %{_builddir}
@@ -110,6 +109,10 @@ exit 0
 
 
 %changelog
+* Sat Aug 10 2019 Luke Short <ekultails@gmail.com> 20190705-8
+- Suggest maraidb-server instead of mariadb as a dependency
+- Ignore all GCC warnings
+
 * Fri Aug 9 2019 Luke Short <ekultails@gmail.com> 20190705-7
 - Ignore GCC deprecated-copy and pessimizing-move warnings
 
