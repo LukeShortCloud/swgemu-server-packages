@@ -43,13 +43,6 @@ Assign a MySQL user to the database. In this example, "swgemu" is used as the My
 mysql> GRANT ALL ON swgemu.* TO `swgemu`@`localhost` IDENTIFIED BY “<MYSQL_PASSWORD>”;
 ```
 
-For accounting purposes, it is recommended to also add additional tables to record login IP addresses and deleted accounts.
-
-```
-mysql> SOURCE /opt/swgemu-server/MMOCoreORB/sql/updates/account_ips.sql
-mysql> SOURCE /opt/swgemu-server/MMOCoreORB/sql/updates/deletedcharacters_add_dbdeleted.sql
-```
-
 Set the server's main IP address in the `swgemu.galaxy` table.
 
 ```
@@ -72,15 +65,6 @@ MantisName = swgemu
 MantisUser = swgemu
 MantisPass = <PASSWORD>
 MantisPrfx = "mantis_"
-```
-
-Create an administrator user account. This can be used to log in and test the server. Normal player character accounts should have their `admin_level` set to `0`. Generate a random salt for the password and a random number for the unique station_id for the user.
-
-```
-$ openssl passwd -1 -salt <SALT> <SWGEMU_USER_PASSWORD>
-$ mysql -u swgemu -p
-Enter password: <MYSQL_PASSWORD>
-mysql> INSERT INTO swgemu.accounts (username, admin_level, station_id, password, salt) VALUES ("swgemu", 15, <RANDOM_INT>, "<SWGEMU_USER_PASSWORD>", "<SALT>");
 ```
 
 Start the server using systemd or manually.
@@ -230,26 +214,26 @@ Lua scripts from "/opt/swgemu-server/MMOCoreORB/bin/scripts/" are used to handle
 
 Many ports are used for the SWGEmu server.
 
-| Name | Port | Description |
-| --- | --- | --- |
-| ORBPort | 44419 | The port to listen on for the MMOCoreORB game engine. |
-| DBPort | 3306 | The MySQL database client port to connect to the "swgemu" database.. |
-| Login Port | 44453 | The port to listen on for user account authentication. |
-| MantisPort | 3306 | The MySQL databse client port to use to connect to the "mantis" database. |
-| PingPort | 44462 | The port to listen on for simple server status connections from clients. |
-| StatusPort | 44455 | The port to listen on to report the health of a server. |
-| WebPorts | 44460 | |
+| Name | Port | Type | Description |
+| ---- | ---- | ---- | ----------- |
+| ORBPort | 44419 | TCP | The port to listen on for the MMOCoreORB game engine. |
+| DBPort | 3306 | TCP | The MySQL database client port to connect to the "swgemu" database.. |
+| Login Port | 44453 | UDP | The port to listen on for user account authentication. |
+| MantisPort | 3306 | TCP | The MySQL databse client port to use to connect to the "mantis" database. |
+| PingPort | 44462 | UDP | The port to listen on for simple server status connections from clients. |
+| StatusPort | 44455 | TCP | The port to listen on to report the health of a server. |
+| WebPorts | 44460 | TCP | Not enabled by default. |
 
 
 ## Users
 
-SWGEmu user accounts are all handled by the "swgemu" database. User passwords are stored after being encrypted in SHA1. Adding users can be done via the command.
+SWGEmu user accounts are stored in the `swgemu.accounts` MySQL table. User passwords are stored as a SHA256 hash of the database secret, user account password, and a random salt string all combined together.
 
 ```
-$ echo -n "<PASSWORD>" | sha1sum
+$ echo -n "<DBSECRET><USER_PASSWORD><SALT>" | sha256sum
 $ mysql -u swgemu -p
-Enter password: <PASSWORD>
-mysql> INSERT INTO swgemu.accounts (username, password, admin_level) VALUES ("swgemu", "<SHA1_HASHED_ADMIN_PASSWORD>", <ADMIN_LEVEL>);
+Enter password: <MYSQL_PASSWORD>
+mysql> INSERT INTO swgemu.accounts (username, station_id, password, salt) VALUES ("swgemu", <RANDOM_INT>, "<SHA256_HASH>", "<SALT>");
 ```
 
 Different admin levels exist to give users more or less control of the server. These access control lists (ACLs) are all defined as Lua scripts in "/opt/swgemu-server/MMOCoreORB/bin/scripts/staff/levels." The default levels include:
@@ -265,4 +249,13 @@ Different admin levels exist to give users more or less control of the server. T
 * 7 = CC
 * 6 = Tester
 * 1 = Intern
-* 0 = Non-privileged player
+* 0 = Non-privileged player (the default `admin_level`)
+
+Create an administrator user account. This can be used to log in and test the server. Example:
+
+```
+$ echo -n 'swgemus3cr37!salt123p@$$w0rd' | sha256sum
+$ mysql -u swgemu -p
+Enter password: <MYSQL_PASSWORD>
+mysql> INSERT INTO swgemu.accounts (username, admin_level, station_id, password, salt) VALUES ("swgemu", 15, 123456, "<SHA256_HASH>", "salt123");
+```
