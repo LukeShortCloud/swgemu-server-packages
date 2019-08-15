@@ -51,13 +51,7 @@ git reset --hard
 git clean -fdx
 git fetch --all
 git checkout %{core3_commit}
-
-# If the symbolic link to "MMOEngine" does not exist,
-# then create it.
-if [[ ! -h "MMOEngine" ]]; then
-    ln -s ../PublicEngine-%{publicengine_commit}/MMOEngine MMOEngine
-fi
-
+ln -s ../PublicEngine-%{publicengine_commit}/MMOEngine MMOEngine
 cd MMOCoreORB
 make config
 make config
@@ -66,9 +60,9 @@ make cleanidl
 # Do not force GCC to error out on warnings.
 # Enable ccache for faster compilation time when recreating the RPM.
 %if 0%{?fedora}
-sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF -DENABLE_ERROR_ON_WARNINGS=OFF -DCMAKE_CXX_COMPILER_LAUNCHER=ccache"/g' Makefile
+sed -i 's/CMAKE_ARGS\ =/CMAKE_ARGS=-DENABLE_NATIVE=OFF\ -DENABLE_ERROR_ON_WARNINGS=OFF\ -DCMAKE_CXX_COMPILER_LAUNCHER=ccache/g' Makefile
 %else
-sed -i 's/CMAKE_ARG\S =/CMAKE_ARGS="-DENABLE_NATIVE=OFF -DENABLE_ERROR_ON_WARNINGS=OFF"/g' Makefile
+sed -i 's/CMAKE_ARGS\ =/CMAKE_ARGS=-DENABLE_NATIVE=OFF\ -DENABLE_ERROR_ON_WARNINGS=OFF/g' Makefile
 %endif
 make -j 4 build-cmake
 cd %{_builddir}
@@ -87,12 +81,10 @@ exit 0
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/usr/bin/ %{buildroot}/opt/swgemu-server/doc/\
- %{buildroot}/usr/lib/systemd/system/
-cp -r Core3/MMOCoreORB %{buildroot}/opt/swgemu-server/
-cp -r PublicEngine-%{publicengine_commit}/MMOEngine %{buildroot}/opt/swgemu-server/
+mkdir -p %{buildroot}/opt/swgemu-server/doc/ %{buildroot}/usr/lib/systemd/system/
+cp -r Core3/MMOCoreORB/bin %{buildroot}/opt/swgemu-server/
+cp -r Core3/MMOCoreORB/sql %{buildroot}/opt/swgemu-server/
 cp %{SOURCE1} %{buildroot}/usr/lib/systemd/system/
-find %{buildroot} -name ".git*" -delete
 cp %{SOURCE2} %{buildroot}/opt/swgemu-server/doc/
 
 
@@ -100,7 +92,7 @@ cp %{SOURCE2} %{buildroot}/opt/swgemu-server/doc/
 %doc
 %attr(-, swgemu, swgemu) /opt/swgemu-server
 %attr(644, root, root) /usr/lib/systemd/system/swgemu-server.service
-%config(noreplace) /opt/swgemu-server/MMOCoreORB/bin/conf/config.lua
+%config(noreplace) /opt/swgemu-server/bin/conf/config.lua
 
 
 %postun
@@ -109,9 +101,11 @@ exit 0
 
 
 %changelog
-* Sat Aug 10 2019 Luke Short <ekultails@gmail.com> 20190705-8
+* Wed Aug 14 2019 Luke Short <ekultails@gmail.com> 20190705-8
+- Only include the binaries in the RPM
 - Suggest maraidb-server instead of mariadb as a dependency
 - Ignore all GCC warnings
+- Do not quote CMake arguments
 
 * Fri Aug 9 2019 Luke Short <ekultails@gmail.com> 20190705-7
 - Ignore GCC deprecated-copy and pessimizing-move warnings

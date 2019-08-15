@@ -11,12 +11,12 @@
 
 # Getting Started
 
-After installing the "swgemu-server" package for the first time, initial setup is required. A MySQL or MariaDB database needs to be setup and configured. The client TRE files also need to be copied over from a official Star Wars Galaxies game installation.
+After installing the `swgemu-server` package for the first time, initial setup is required. A MySQL or MariaDB database needs to be setup and configured. The client TRE files also need to be copied over from a official Star Wars Galaxies game installation.
 
 
 ## Database
 
-All of the databases and tables are stored in the "/opt/swgemu-server/MMOCoreORB/sql/" directory.
+All of the databases and tables are stored in the `/opt/swgemu-server/sql/` directory.
 
 Install a MySQL compatiblle database server.
 
@@ -32,9 +32,9 @@ As the root MySQL user, create the `swgemu` MySQL database and import all of the
 # mysql
 mysql> CREATE DATABASE IF NOT EXISTS swgemu;
 mysql> USE swgemu;
-mysql> SOURCE /opt/swgemu-server/MMOCoreORB/sql/datatables.sql;
-mysql> SOURCE /opt/swgemu-server/MMOCoreORB/sql/mantis.sql;
-mysql> SOURCE /opt/swgemu-server/MMOCoreORB/sql/swgemu.sql;
+mysql> SOURCE /opt/swgemu-server/sql/datatables.sql;
+mysql> SOURCE /opt/swgemu-server/sql/mantis.sql;
+mysql> SOURCE /opt/swgemu-server/sql/swgemu.sql;
 ```
 
 Assign a MySQL user to the database. In this example, "swgemu" is used as the MySL user.
@@ -52,7 +52,7 @@ mysql> UPDATE swgemu.galaxy SET address="<SERVER_IP>";
 Configure the MySQL connection details to the "swgemu" database. The Mantis configuration should mirror the original MySQL connection settings. Mantis is used for helping to track issues in the game.
 
 ```
-# vim /opt/swgemu-server/MMOCoreORB/bin/conf/config.lua
+# vim /opt/swgemu-server/bin/conf/config.lua
 DBHost = 127.0.0.1
 DBPort = 3306
 DBName = swgemu
@@ -72,15 +72,18 @@ Start the server using systemd or manually.
 ```
 # systemctl start swgemu-server
 ```
+
+OR
+
 ```
-# cd /opt/swgemu-server/MMOCoreORB/bin/
+# cd /opt/swgemu-server/bin/
 # core3
 ```
 
 
 # TRE Files
 
-TRE files contain all of the models and client-side data for rendering. These are not provided by the RPM. SWGEmu uses unmodified TRE files from the Pre-Combat Update (PCU) era. They can be found in the original installation directory of the Star Wars Galaxies game: `C:\Program Files (x86)\StarWarsGalaxies\`. The TRE files to load can be modified in the  `/opt/swgemu-server/MMOCoreORB/bin/conf/config.lua` file.
+TRE files contain all of the models and client-side data for rendering. These are not provided by the RPM. SWGEmu uses unmodified TRE files from the Pre-Combat Update (PCU) era. They can be found in the original installation directory of the Star Wars Galaxies game: `C:\Program Files (x86)\StarWarsGalaxies\`. The TRE files to load can be modified in the  `/opt/swgemu-server/bin/conf/config.lua` file.
 
 * TrePath = The full path to the directory that contains the TRE files and the `live.cfg` configuration file. By default, SWGEmu will look for TRE files in the `/home/swgemu/Desktop/SWGEmu/` directory.
 * TreFiles = All of the TRE files to load for the server. Custom TRE files can also be added here.
@@ -139,7 +142,7 @@ TRE files contain all of the models and client-side data for rendering. These ar
 
 # Getting Started - Planets
 
-By default, only the Tutorial and Tatooine zones are enabled to lower the resource usage of a new server. Enabling and disabling zones/planets is handled in the "/opt/swgemu-server/MMOCoreORB/bin/conf/config.lua" file with the "ZonesEnabled" variable. Remove any "--" Lua comment characters from planets that should be enabled. Below is an example of enabling all zones except for space (which are currently not implemented server side).
+By default, only the Tutorial and Tatooine zones are enabled to lower the resource usage of a new server. Enabling and disabling zones/planets is handled in the `/opt/swgemu-server/bin/conf/config.lua` file with the "ZonesEnabled" variable. Remove any "--" Lua comment characters from planets that should be enabled. Below is an example of enabling all zones except for space (which are currently not implemented server side).
 
 ```
         ZonesEnabled = {
@@ -194,9 +197,9 @@ By default, only the Tutorial and Tatooine zones are enabled to lower the resour
 
 # Configurations
 
-All of the server files are located in "/opt/swgemu-server/" directory. The main configuration file is "/opt/swgemu-server/MMOCoreORB/bin/conf/config.lua."
+All of the server files are located in `/opt/swgemu-server/` directory. The main configuration file is `/opt/swgemu-server/bin/conf/config.lua`.
 
-Lua scripts from "/opt/swgemu-server/MMOCoreORB/bin/scripts/" are used to handle many in-game mechanics.
+Lua scripts from `/opt/swgemu-server/bin/scripts/` are used to handle many in-game mechanics.
 
 * ai = Determine artificial intelligence (A.I.) logic for non-player characters (NPCs).
 * commands = Commands that player characters (PCs) can run in-game.
@@ -236,7 +239,7 @@ Enter password: <MYSQL_PASSWORD>
 mysql> INSERT INTO swgemu.accounts (username, station_id, password, salt) VALUES ("swgemu", <RANDOM_INT>, "<SHA256_HASH>", "<SALT>");
 ```
 
-Different admin levels exist to give users more or less control of the server. These access control lists (ACLs) are all defined as Lua scripts in "/opt/swgemu-server/MMOCoreORB/bin/scripts/staff/levels." The default levels include:
+Different admin levels exist to give users more or less control of the server. These access control lists (ACLs) are all defined as Lua scripts in `/opt/swgemu-server/bin/scripts/staff/levels/`. The default levels include:
 
 * 15 = Administrator
 * 14 = Developer
