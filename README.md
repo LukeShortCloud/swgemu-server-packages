@@ -6,7 +6,7 @@
 
 # SWGEmu Server Packages
 
-This repository provides the necessary files to build unofficial RPM packages for the Star Wars Galaxies Emulator (SWGEmu) server. This uses pinned versions of git commits from GitHub for the [Core3](https://github.com/TheAnswer/Core3) and [PublicEngine](https://github.com/TheAnswer/PublicEngine) projects.
+This repository provides the necessary files to build unofficial an RPM package for the Star Wars Galaxies Emulator (SWGEmu) server. This uses pinned versions of git commits from GitHub for the [Core3](https://github.com/TheAnswer/Core3) and [PublicEngine](https://github.com/TheAnswer/PublicEngine) projects. This RPM is currently **beta** quality. Use at your own risk.
 
 Built RPMs are provided on the [ekultails/swgemu Fedora COPR](https://copr.fedorainfracloud.org/coprs/ekultails/swgemu/).
 
