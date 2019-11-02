@@ -3,7 +3,7 @@
 
 Name: swgemu-server
 Version: 20190705
-Release: 8%{?dist}
+Release: 9%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
@@ -11,10 +11,7 @@ URL: https://github.com/ekultails/swgemu-server-packages
 SOURCE0: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
 SOURCE1: swgemu-server.service
 SOURCE2: readme.md
-BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
-%if 0%{?fedora}
-BuildRequires: ccache
-%endif
+BuildRequires: automake ccache cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
 Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
 Suggests: mariadb-server
 
@@ -59,17 +56,14 @@ make cleanidl
 # Disable the usage of the compilation argument "-march=native" for generic builds.
 # Do not force GCC to error out on warnings.
 # Enable ccache for faster compilation time when recreating the RPM.
-%if 0%{?fedora}
 sed -i 's/CMAKE_ARGS\ =/CMAKE_ARGS=-DENABLE_NATIVE=OFF\ -DENABLE_ERROR_ON_WARNINGS=OFF\ -DCMAKE_CXX_COMPILER_LAUNCHER=ccache/g' Makefile
-%else
-sed -i 's/CMAKE_ARGS\ =/CMAKE_ARGS=-DENABLE_NATIVE=OFF\ -DENABLE_ERROR_ON_WARNINGS=OFF/g' Makefile
-%endif
 make -j 4 build-cmake
 cd %{_builddir}
 # This will find and delete all files that contain a word and
 # end with the file extension ".cpp", ".h", or ".py" (source files).
 find . -regextype posix-egrep -regex '(.+\/\w+\.cpp|.+\/\w+\.h|.+\/\w+\.py)' -delete
-
+# Remove all git related files.
+find . -name ".git*" -exec rm -rf {} \; 2> /dev/null || true
 
 %pre
 getent group swgemu >/dev/null || groupadd -r swgemu
@@ -81,9 +75,10 @@ exit 0
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/opt/swgemu-server/doc/ %{buildroot}/usr/lib/systemd/system/
+mkdir -p %{buildroot}/opt/swgemu-server/doc/ %{buildroot}/usr/lib/systemd/system/ %{buildroot}/etc/
 cp -r Core3/MMOCoreORB/bin %{buildroot}/opt/swgemu-server/
 cp -r Core3/MMOCoreORB/sql %{buildroot}/opt/swgemu-server/
+ln -s /opt/swgemu-server/bin/conf %{buildroot}/etc/swgemu-server
 cp %{SOURCE1} %{buildroot}/usr/lib/systemd/system/
 cp %{SOURCE2} %{buildroot}/opt/swgemu-server/doc/
 
@@ -93,14 +88,28 @@ cp %{SOURCE2} %{buildroot}/opt/swgemu-server/doc/
 %attr(-, swgemu, swgemu) /opt/swgemu-server
 %attr(644, root, root) /usr/lib/systemd/system/swgemu-server.service
 %config(noreplace) /opt/swgemu-server/bin/conf/config.lua
+%config(noreplace) /opt/swgemu-server/bin/databases
+/etc/swgemu-server
+
+
+%preun
+/usr/bin/systemctl stop swgemu-server
 
 
 %postun
 /usr/bin/systemctl daemon-reload
+rm -f /etc/swgemu-server
 exit 0
 
 
 %changelog
+* Sat Nov 2 2019 Luke Short <ekultails@gmail.com> 20190705-9
+- Keep the databases directory during package updates
+- Re-enable ccache build depedency (it is available in EPEL for EL8 now)
+- Stop the swgemu-server service during a package removable/update
+- Symlink /opt/swgemu-server/bin/conf to /etc/swgemu-server
+- Remove all git files
+
 * Wed Aug 14 2019 Luke Short <ekultails@gmail.com> 20190705-8
 - Only include the binaries in the RPM
 - Suggest maraidb-server instead of mariadb as a dependency
