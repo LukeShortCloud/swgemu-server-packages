@@ -1,18 +1,18 @@
-%define core3_commit cd5b463d60f34de138861bff5b00d8554655103a
-%define publicengine_commit 1bbdb8a182a9e44bc23f1d972ac254c1ca98db03
+%define core3_commit 7f3b1665d589f34acbb5056ac83c9b0b7f4be086
+%define publicengine_commit f01991b4d073c88b775df5eada3924c86c23d7c8
 
 Name: swgemu-server
-Version: 20190705
-Release: 9%{?dist}
+Version: 20191028
+Release: 1%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
 %undefine _disable_source_fetch
-SOURCE0: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
+SOURCE0: https://github.com/swgemu/PublicEngine/archive/%{publicengine_commit}.tar.gz
 SOURCE1: swgemu-server.service
 SOURCE2: readme.md
 BuildRequires: automake ccache cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
-Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
+Requires: binutils java-1.8.0-openjdk-headless lua libdb shadow-utils
 Suggests: mariadb-server
 
 
@@ -21,7 +21,7 @@ Star Wars Galaxies Emulator (SWGEmu) server. Documentation for setting up a new 
 
 
 %prep
-tar -x -v -f %{SOURCE0}
+tar -x -f %{SOURCE0}
 
 
 %build
@@ -40,7 +40,7 @@ fi
 popd
 
 if [ ! -d "Core3" ]; then
-    git clone https://github.com/TheAnswer/Core3.git
+    git clone https://github.com/swgemu/Core3.git
 fi
 
 cd Core3
@@ -50,8 +50,6 @@ git fetch --all
 git checkout %{core3_commit}
 ln -s ../PublicEngine-%{publicengine_commit}/MMOEngine MMOEngine
 cd MMOCoreORB
-make config
-make config
 make cleanidl
 # Disable the usage of the compilation argument "-march=native" for generic builds.
 # Do not force GCC to error out on warnings.
@@ -103,6 +101,9 @@ exit 0
 
 
 %changelog
+* Wed Nov 6 2019 Luke Short <ekultails@gmail.com> 20191028-1
+- Update to the latest release of SWGEmu and use the new GitHub repositories
+
 * Sat Nov 2 2019 Luke Short <ekultails@gmail.com> 20190705-9
 - Keep the databases directory during package updates
 - Re-enable ccache build depedency (it is available in EPEL for EL8 now)
