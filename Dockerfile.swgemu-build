@@ -1,0 +1,4 @@
+FROM centos:8.1.1911
+RUN dnf -y install 'dnf-command(builddep)' epel-release git rpm-build && dnf -y copr enable ekultails/lua && dnf -y builddep /tmp/swgemu-server.spec && mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
+VOLUME /root/rpmbuild/
+ENTRYPOINT rpmbuild -bb /root/rpmbuild/SPECS/swgemu-server.spec
