@@ -1,4 +1,9 @@
 FROM centos:8.1.1911
-RUN dnf -y install 'dnf-command(builddep)' epel-release git rpm-build && dnf -y copr enable ekultails/lua && dnf -y builddep /tmp/swgemu-server.spec && mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS}
-VOLUME /root/rpmbuild/
+# Only use this file for installing build dependencies.
+# It is expected that the real swgemu-server.spec is provided
+# via a volume during the build of the RPM.
+COPY rpm/SPECS/swgemu-server.spec /tmp/swgemu-server.spec
+RUN dnf -y install 'dnf-command(builddep)' epel-release git rpm-build && dnf -y copr enable ekultails/lua && dnf -y builddep /tmp/swgemu-server.spec && mkdir -p /root/rpmbuild/{BUILD,RPMS,SOURCES,SPECS,SRPMS} && rm -f /tmp/swgemu-server.spec
+VOLUME /root/rpmbuild/SPECS
+VOLUME /root/rpmbuild/SOURCES
 ENTRYPOINT rpmbuild -bb /root/rpmbuild/SPECS/swgemu-server.spec
