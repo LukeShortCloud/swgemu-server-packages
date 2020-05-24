@@ -233,10 +233,10 @@ Many ports are used for the SWGEmu server.
 SWGEmu user accounts are stored in the `swgemu.accounts` MySQL table. User passwords are stored as a SHA256 hash of the database secret, user account password, and a random salt string all combined together.
 
 ```
-$ echo -n "<DBSECRET><USER_PASSWORD><SALT>" | sha256sum
+$ echo -n "<DBSECRET><SWGEMU_USER_PASSWORD><SALT>" | sha256sum
 $ mysql -u swgemu -p
 Enter password: <MYSQL_PASSWORD>
-mysql> INSERT INTO swgemu.accounts (username, station_id, password, salt) VALUES ("swgemu", <RANDOM_INT>, "<SHA256_HASH>", "<SALT>");
+mysql> INSERT INTO swgemu.accounts (username, station_id, password, salt, active) VALUES ("swgemu", <RANDOM_INT>, "<SHA256_HASH>", "<SALT>", 1);
 ```
 
 Different admin levels exist to give users more or less control of the server. These access control lists (ACLs) are all defined as Lua scripts in `/opt/swgemu-server/bin/scripts/staff/levels/`. The default levels include:
@@ -257,8 +257,8 @@ Different admin levels exist to give users more or less control of the server. T
 Create an administrator user account. This can be used to log in and test the server. Example:
 
 ```
-$ echo -n 'swgemus3cr37!salt123p@$$w0rd' | sha256sum
+$ echo -n 'swgemus3cr37!p@$$w0rdsalt123' | sha256sum
 $ mysql -u swgemu -p
 Enter password: <MYSQL_PASSWORD>
-mysql> INSERT INTO swgemu.accounts (username, admin_level, station_id, password, salt) VALUES ("swgemu", 15, 123456, "<SHA256_HASH>", "salt123");
+mysql> INSERT INTO swgemu.accounts (username, admin_level, station_id, password, salt, active) VALUES ("swgemu", 15, 123456, "e540d339d398b31984b441af648bcb3a4739c14b5c917eaa0baf91cea74c5f41", "salt123", 1);
 ```
