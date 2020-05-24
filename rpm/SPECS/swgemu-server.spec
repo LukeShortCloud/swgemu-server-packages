@@ -1,21 +1,18 @@
-%define core3_commit cd5b463d60f34de138861bff5b00d8554655103a
-%define publicengine_commit 1bbdb8a182a9e44bc23f1d972ac254c1ca98db03
+%define core3_commit 7f3b1665d589f34acbb5056ac83c9b0b7f4be086
+%define publicengine_commit f01991b4d073c88b775df5eada3924c86c23d7c8
 
 Name: swgemu-server
-Version: 20190705
-Release: 8%{?dist}
+Version: 20191028
+Release: 1%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
 %undefine _disable_source_fetch
-SOURCE0: https://github.com/TheAnswer/PublicEngine/archive/%{publicengine_commit}.tar.gz
+SOURCE0: https://github.com/swgemu/PublicEngine/archive/%{publicengine_commit}.tar.gz
 SOURCE1: swgemu-server.service
 SOURCE2: readme.md
-BuildRequires: automake cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
-%if 0%{?fedora}
-BuildRequires: ccache
-%endif
-Requires: java-1.8.0-openjdk-headless lua libdb shadow-utils
+BuildRequires: automake ccache cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
+Requires: binutils java-1.8.0-openjdk-headless lua libdb shadow-utils
 Suggests: mariadb-server
 
 
@@ -24,7 +21,7 @@ Star Wars Galaxies Emulator (SWGEmu) server. Documentation for setting up a new 
 
 
 %prep
-tar -x -v -f %{SOURCE0}
+tar -x -f %{SOURCE0}
 
 
 %build
@@ -43,7 +40,7 @@ fi
 popd
 
 if [ ! -d "Core3" ]; then
-    git clone https://github.com/TheAnswer/Core3.git
+    git clone https://github.com/swgemu/Core3.git
 fi
 
 cd Core3
@@ -53,23 +50,18 @@ git fetch --all
 git checkout %{core3_commit}
 ln -s ../PublicEngine-%{publicengine_commit}/MMOEngine MMOEngine
 cd MMOCoreORB
-make config
-make config
 make cleanidl
 # Disable the usage of the compilation argument "-march=native" for generic builds.
 # Do not force GCC to error out on warnings.
 # Enable ccache for faster compilation time when recreating the RPM.
-%if 0%{?fedora}
 sed -i 's/CMAKE_ARGS\ =/CMAKE_ARGS=-DENABLE_NATIVE=OFF\ -DENABLE_ERROR_ON_WARNINGS=OFF\ -DCMAKE_CXX_COMPILER_LAUNCHER=ccache/g' Makefile
-%else
-sed -i 's/CMAKE_ARGS\ =/CMAKE_ARGS=-DENABLE_NATIVE=OFF\ -DENABLE_ERROR_ON_WARNINGS=OFF/g' Makefile
-%endif
 make -j 4 build-cmake
 cd %{_builddir}
 # This will find and delete all files that contain a word and
 # end with the file extension ".cpp", ".h", or ".py" (source files).
 find . -regextype posix-egrep -regex '(.+\/\w+\.cpp|.+\/\w+\.h|.+\/\w+\.py)' -delete
-
+# Remove all git related files.
+find . -name ".git*" -exec rm -rf {} \; 2> /dev/null || true
 
 %pre
 getent group swgemu >/dev/null || groupadd -r swgemu
@@ -81,9 +73,10 @@ exit 0
 
 %install
 rm -rf %{buildroot}
-mkdir -p %{buildroot}/opt/swgemu-server/doc/ %{buildroot}/usr/lib/systemd/system/
+mkdir -p %{buildroot}/opt/swgemu-server/doc/ %{buildroot}/usr/lib/systemd/system/ %{buildroot}/etc/
 cp -r Core3/MMOCoreORB/bin %{buildroot}/opt/swgemu-server/
 cp -r Core3/MMOCoreORB/sql %{buildroot}/opt/swgemu-server/
+ln -s /opt/swgemu-server/bin/conf %{buildroot}/etc/swgemu-server
 cp %{SOURCE1} %{buildroot}/usr/lib/systemd/system/
 cp %{SOURCE2} %{buildroot}/opt/swgemu-server/doc/
 
@@ -93,14 +86,31 @@ cp %{SOURCE2} %{buildroot}/opt/swgemu-server/doc/
 %attr(-, swgemu, swgemu) /opt/swgemu-server
 %attr(644, root, root) /usr/lib/systemd/system/swgemu-server.service
 %config(noreplace) /opt/swgemu-server/bin/conf/config.lua
+%config(noreplace) /opt/swgemu-server/bin/databases
+/etc/swgemu-server
+
+
+%preun
+/usr/bin/systemctl stop swgemu-server
 
 
 %postun
 /usr/bin/systemctl daemon-reload
+rm -f /etc/swgemu-server
 exit 0
 
 
 %changelog
+* Wed Nov 6 2019 Luke Short <ekultails@gmail.com> 20191028-1
+- Update to the latest release of SWGEmu and use the new GitHub repositories
+
+* Sat Nov 2 2019 Luke Short <ekultails@gmail.com> 20190705-9
+- Keep the databases directory during package updates
+- Re-enable ccache build depedency (it is available in EPEL for EL8 now)
+- Stop the swgemu-server service during a package removable/update
+- Symlink /opt/swgemu-server/bin/conf to /etc/swgemu-server
+- Remove all git files
+
 * Wed Aug 14 2019 Luke Short <ekultails@gmail.com> 20190705-8
 - Only include the binaries in the RPM
 - Suggest maraidb-server instead of mariadb as a dependency
