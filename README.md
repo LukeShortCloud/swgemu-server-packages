@@ -16,18 +16,15 @@ $ sudo dnf install swgemu-server
 ```
 
 
-## RPM
+## Build
+
+
+### RPM
 
 Supported operating systems (x86_64):
 
 * Fedora >= 28
 * RHEL/CentOS 8
-
-For building the RPM, optionally use a container. Note that sudo is not provided or required inside the container.
-
-```
-$ docker run -it --name swgemubuild fedora:28 bash
-```
 
 Install the dependencies to build the RPM, copy over the files required for the it, and then build it.
 
@@ -43,6 +40,27 @@ $ rpmbuild -bb ~/rpmbuild/SPECS/swgemu-server.spec
 
 The compiled RPM will be available at `~/rpmbuild/RPMS/x86_64/swgemu-server*.rpm`.
 
+
+### Container
+
+Create a container with all of the build dependencies required to compile the server and create a RPM package.
+
+```
+$ buildah bud -f Dockerfile.swgemu-build -t swgemu-build:latest
+```
+
+Automatically build the RPM.
+
+```
+$ podman run -v $(pwd)/rpm/SPECS:/root/rpmbuild/SPECS -v $(pwd)/rpm/SOURCES:/root/rpmbuild/SOURCES --name=swgemu-build localhost/swgemu-build:latest
+```
+
+Alternatively, manually and interactively run the build.
+
+```
+$ podman run --name=swgemu-build -v $(pwd)/rpm/SPECS:/root/rpmbuild/SPECS -v $(pwd)/rpm/SOURCES:/root/rpmbuild/SOURCES -it --entrypoint /bin/bash localhost/swgemu-build:latest
+$ rpmbuild -bb ~/rpmbuild/SPECS/swgemu-server.spec
+```
 
 ## Server Configuration
 
