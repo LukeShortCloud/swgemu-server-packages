@@ -1,17 +1,15 @@
-%define core3_commit 7f3b1665d589f34acbb5056ac83c9b0b7f4be086
-%define publicengine_commit f01991b4d073c88b775df5eada3924c86c23d7c8
+%define core3_commit 200e10be5055ac596c3fe4866f0a69e846314631
 
 Name: swgemu-server
-Version: 20191028
+Version: 20200521
 Release: 1%{?dist}
 Summary: Run a Star Wars Galaxies server with SWGEmu.
 License: GPLv3
 URL: https://github.com/ekultails/swgemu-server-packages
 %undefine _disable_source_fetch
-SOURCE0: https://github.com/swgemu/PublicEngine/archive/%{publicengine_commit}.tar.gz
-SOURCE1: swgemu-server.service
-SOURCE2: readme.md
-BuildRequires: automake ccache cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
+SOURCE0: swgemu-server.service
+SOURCE1: readme.md
+BuildRequires: automake coreutils ccache cmake findutils git gcc gcc-c++ java-1.8.0-openjdk-headless libasan libatomic libdb-devel lua-devel make mariadb-devel openssl-devel
 Requires: binutils java-1.8.0-openjdk-headless lua libdb shadow-utils
 Suggests: mariadb-server
 
@@ -20,27 +18,14 @@ Suggests: mariadb-server
 Star Wars Galaxies Emulator (SWGEmu) server. Documentation for setting up a new server is provided at /opt/swgemu/doc/readme.md.
 
 
-%prep
-tar -x -f %{SOURCE0}
-
-
 %build
-pushd .
-cd PublicEngine-%{publicengine_commit}/MMOEngine
-make
-chmod 755 bin/idlc
-
-if [ -z ${CLASSPATH+x} ]; then
-    export CLASSPATH="$(pwd)/bin/idlc.jar"
-else
-    # Append to the CLASSPATH variable if it exists.
-    export CLASSPATH="${CLASSPATH}:$(pwd)/bin/idlc.jar"
-fi
-
-popd
-
 if [ ! -d "Core3" ]; then
     git clone https://github.com/swgemu/Core3.git
+    pushd .
+    cd Core3
+    # Required to pull in the engine3 dependency.
+    git submodule update --init --recursive
+    popd
 fi
 
 cd Core3
@@ -48,14 +33,13 @@ git reset --hard
 git clean -fdx
 git fetch --all
 git checkout %{core3_commit}
-ln -s ../PublicEngine-%{publicengine_commit}/MMOEngine MMOEngine
+git submodule update --recursive --remote
 cd MMOCoreORB
-make cleanidl
 # Disable the usage of the compilation argument "-march=native" for generic builds.
 # Do not force GCC to error out on warnings.
 # Enable ccache for faster compilation time when recreating the RPM.
 sed -i 's/CMAKE_ARGS\ =/CMAKE_ARGS=-DENABLE_NATIVE=OFF\ -DENABLE_ERROR_ON_WARNINGS=OFF\ -DCMAKE_CXX_COMPILER_LAUNCHER=ccache/g' Makefile
-make -j 4 build-cmake
+make -j $(nproc)
 cd %{_builddir}
 # This will find and delete all files that contain a word and
 # end with the file extension ".cpp", ".h", or ".py" (source files).
@@ -77,8 +61,8 @@ mkdir -p %{buildroot}/opt/swgemu-server/doc/ %{buildroot}/usr/lib/systemd/system
 cp -r Core3/MMOCoreORB/bin %{buildroot}/opt/swgemu-server/
 cp -r Core3/MMOCoreORB/sql %{buildroot}/opt/swgemu-server/
 ln -s /opt/swgemu-server/bin/conf %{buildroot}/etc/swgemu-server
-cp %{SOURCE1} %{buildroot}/usr/lib/systemd/system/
-cp %{SOURCE2} %{buildroot}/opt/swgemu-server/doc/
+cp %{SOURCE0} %{buildroot}/usr/lib/systemd/system/
+cp %{SOURCE1} %{buildroot}/opt/swgemu-server/doc/
 
 
 %files
@@ -101,6 +85,11 @@ exit 0
 
 
 %changelog
+* Sun May 24 2020 Luke Short <ekultails@gmail.com> 20200521-1
+- Update to the latest release of SWGEmu
+- Use the recently open sourced engine3 project instead of the proprietary binary PublicEngine project
+- Add build dependency on coreutils to have nproc
+
 * Wed Nov 6 2019 Luke Short <ekultails@gmail.com> 20191028-1
 - Update to the latest release of SWGEmu and use the new GitHub repositories
 

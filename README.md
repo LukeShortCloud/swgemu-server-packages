@@ -53,7 +53,7 @@ A SWGEmu server adminsitrator's guide is provided in the GitHub repository at [r
 
 * There is `XYZ` problem with SWGEmu. Where should issues be reported?
     * Only open GitHub issues here if there are issues building, installing, or updating the RPM itself. Visit [https://www.swgemu.com/bugs/](https://www.swgemu.com/bugs/) to view or open bug reports. Upstream patches can be submitted to [http://review.swgemu.com](http://review.swgemu.com).
-* RHEL 8.0 does not provide `lua-devel`. How can the RPM be built?
+* CentOS/RHEL 8 does not provide `lua-devel`. How can the RPM be installed?
     * Install `lua-devel` from the [ekultails/lua Fedora COPR](https://copr.fedorainfracloud.org/coprs/ekultails/lua/): `$ sudo dnf copr enable ekultails/lua && sudo dnf install lua-devel`
     * Or use the [CentOS 8 source code for `lua`](https://git.centos.org/rpms/lua/tree/c8) to build all of the relevant RPMs following these [instructions](https://wiki.centos.org/Sources#head-8b5a127334c95d7340a4952ab9622a83988076c0). This will build the required `lua-devel` RPM to help fulfill all of the build dependencies.
 * Why are there no Debian packages?
